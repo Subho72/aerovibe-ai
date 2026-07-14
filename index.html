@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edge AI AeroVibe // Air India Fleet Edge-AI Propulsion Digital Twin</title>
+  <!-- NASA / Airbus Premium Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Fullscreen Air India Emergency Alert Overlay -->
+  <div class="nasa-alert-overlay" id="nasa-alert">
+    <div class="nasa-alert-box">
+      <div class="alert-danger-banner">🚨 EMERGENCY FLEET CONTAINMENT SYSTEM ACTIVE 🚨</div>
+      <div class="alert-body">
+        <h4 class="alert-title" id="alert-main-title">AI-101 DUAL-ENGINE ETOPS SAFETY ISOLATION COMPLETE</h4>
+        <div class="alert-grid">
+          <div class="alert-item">
+            <span class="alert-lbl">FLIGHT UNIT</span>
+            <strong class="alert-val" id="alert-flight-unit">Air India Flight AI-101 // B787-8</strong>
+          </div>
+          <div class="alert-item">
+            <span class="alert-lbl">DIAGNOSTIC STATUS</span>
+            <strong class="alert-val text-red" id="alert-diagnostic-status">SEVERE STRIKE / BLADE SHEAR</strong>
+          </div>
+          <div class="alert-item">
+            <span class="alert-lbl">EDGE RESPONSE TIME</span>
+            <strong class="alert-val text-green" id="alert-latency-val">17.2 ms (CRITICAL FAILURE BOUNDED)</strong>
+          </div>
+          <div class="alert-item">
+            <span class="alert-lbl">MITIGATION ACTIONS</span>
+            <strong class="alert-val text-green" id="alert-action-val">Fuel Solenoid HALTED // VGV at Stall Pitch</strong>
+          </div>
+          <div class="alert-item" style="grid-column: span 2;">
+            <span class="alert-lbl">TRI-LAYER SAFETY VERIFICATION SYSTEM STATUS</span>
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: #ffffff; margin-top: 5px; display: flex; flex-direction: column; gap: 4px;">
+              <div>Filter A (Sensor Fusion): <span class="text-green">[VERIFIED]</span> Vibration threshold exceeded.</div>
+              <div>Filter B (Temporal Buffer): <span class="text-green">[VERIFIED]</span> Persistent anomalies detected.</div>
+              <div>Filter C (Pilot Override): <span class="text-amber" id="alert-override-status">[BYPASSED - TIME EXPIRED]</span></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-acknowledge" id="btn-ack-alert">ACKNOWLEDGE EMERGENCY & REVIEW FLIGHT PATH</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Themes -->
+  <div class="stars"></div>
+  <div class="hex-grid"></div>
+  <div class="radar-line"></div>
+  <div class="hud-overlay"></div>
+  <div class="scanlines"></div>
+
+  <!-- Ambient Glow Layers -->
+  <div class="ambient-glow cyan-glow"></div>
+  <div class="ambient-glow red-glow" id="ambient-red-trigger"></div>
+
+  <div class="app-container">
+    
+    <!-- Navigation Status Bar -->
+    <nav class="avionics-nav">
+      <div class="nav-logo">
+        <svg viewBox="0 0 100 100" class="app-logo-svg">
+          <circle cx="50" cy="50" r="45" stroke="#00f0ff" stroke-width="3" fill="none" opacity="0.3" />
+          <g id="logo-turbine-blades">
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(45 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(90 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(135 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(180 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(225 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(270 50 50)" />
+            <path d="M50 50 L45 15 A8 8 0 0 1 55 15 Z" fill="#00f0ff" transform="rotate(315 50 50)" />
+          </g>
+          <circle cx="50" cy="50" r="12" fill="#0c121b" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1.5" />
+          <circle cx="50" cy="50" r="6" class="green" id="system-status-dot" />
+        </svg>
+        <h1>Edge AI AeroVibe</h1>
+        <span class="badge-airgapped">ENG-TWIN v2.2</span>
+      </div>
+      <!-- Hamburger Icon Trigger -->
+      <button class="hamburger-menu-btn" id="menu-toggle-btn" aria-label="Toggle Navigation Menu">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+
+    <!-- PAGE 1: PORTAL DECK (Hero Image & Problems-Solution Specifications) -->
+    <section id="page-portal" class="page-view active">
+      
+
+
+      <div class="portal-hero-section" id="deck-mission">
+        <div class="hero-image-wrapper">
+          <img src="file:///C:/Users/saiva/.gemini/antigravity/brain/6ac55659-4f22-4d8e-90a1-3cd13d29909b/aerovibe_hero_twin_1783609884025.jpg" onerror="this.onerror=null; this.src='aerovibe_hero_twin.jpg'" alt="Air India Fleet Propulsion Digital Twin" class="hero-image">
+          <div class="hero-image-overlay"></div>
+          <div class="hero-image-glow"></div>
+        </div>
+        <div class="hero-text-content">
+          <h2>Air India Commercial Fleet Propulsion Digital Twin</h2>
+          <p>
+            An offline, air-gapped commercial flight safety co-processor utilizing local casing sensors and a compressed TinyML (TensorFlow Lite INT8) model to intercept engine stress fractures in under 22 milliseconds—safeguarding commercial passenger flights, ensuring ETOPS certification compliance, and preventing catastrophic engine failures over remote trans-oceanic routes.
+          </p>
+        </div>
+      </div>
+
+      <div class="portal-grid" id="deck-problem">
+        <!-- Problem and Solution cards in Bullet Points -->
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>COMMERCIAL TURBOFAN BLADE STRESS THREAT METRICS</h3>
+          </div>
+          <div class="card-body comparison-section">
+            <div class="comp-box problem">
+              <h4>The Threat: Airliner Blade Stress</h4>
+              <ul class="bullet-metrics-list">
+                <li>✔ <strong>14,250+ RPM</strong> commercial cruise loads</li>
+                <li>✔ High aerodynamic casing stress waves</li>
+                <li>✔ Micro-cracks propagate under high thermal loads</li>
+                <li>✔ Threat: In-flight engine failure & unplanned fleet grounding</li>
+              </ul>
+              <div class="stat-highlight">
+                <span>Centrifugal Loading</span>
+                <strong>~10,000 Gs</strong>
+              </div>
+            </div>
+            
+            <div class="comp-box latency" id="deck-solution">
+              <h4>ETOPS Satellite Outages (WAN dropouts on Air India long-haul routes)</h4>
+              <ul class="bullet-metrics-list">
+                <li>✔ Satellite links unavailable over oceans</li>
+                <li>✔ WAN dropouts in polar flight paths</li>
+                <li>✔ <strong>3,500+ ms</strong> cloud link latency</li>
+                <li>✔ Cannot prevent millisecond containment failures</li>
+              </ul>
+              <div class="stat-highlight warning">
+                <span>Satellite Latency</span>
+                <strong>3,500+ ms</strong>
+              </div>
+            </div>
+            
+            <div class="comp-box solution">
+              <h4>Edge AI Fleet Protection</h4>
+              <ul class="bullet-metrics-list">
+                <li>✔ Local contact acoustic emission sensor</li>
+                <li>✔ DSP spectral FFT vectoring in 3.1ms</li>
+                <li>✔ <strong>17.2 ms</strong> closed-loop isolation</li>
+                <li>✔ <strong>100% Offline</strong> edge execution</li>
+              </ul>
+              <div class="stat-highlight healthy">
+                <span>Closed-Loop Isolation</span>
+                <strong>17.2 ms</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Architecture Flowchart Diagram -->
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>AIR INDIA AVIONICS ARCHITECTURE DIAGRAM</h3>
+          </div>
+          <div class="card-body">
+            <div class="flowchart-container">
+              <div class="flow-node" data-flow="sensor">
+                <div class="node-number">01</div>
+                <h5>Acoustic Sensor</h5>
+                <p>Captures casing stress waves ($20\text{--}100\text{ kHz}$).</p>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-node" data-flow="dsp">
+                <div class="node-number">02</div>
+                <h5>ESP32 DSP (FFT)</h5>
+                <p>Computes 64-bin spectrogram column in 3.1ms.</p>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-node" data-flow="ml">
+                <div class="node-number">03</div>
+                <h5>TFLite CNN</h5>
+                <p>Executes TinyML INT8 model forward-pass in 11.4ms.</p>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-node" data-flow="override">
+                <div class="node-number">04</div>
+                <h5>GPIO / Veto Bypass</h5>
+                <p>Triggers solenoid relays & swivels VGV pitch vanes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spec Highlights -->
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>EDGE AI FLEET ECONOMIC SPECIFICATIONS</h3>
+          </div>
+          <div class="card-body project-strengths-list">
+            <div class="strength-item">
+              <span class="strength-num">01</span>
+              <div class="strength-content">
+                <h5>Asset Protection & Maintenance Savings</h5>
+                <p>Detecting casing micro-fractures locally prevents catastrophic failures, saving airlines millions in engine hulls, avoiding AOG (Aircraft on Ground) penalties, and protecting passenger confidence.</p>
+              </div>
+            </div>
+            <div class="strength-item">
+              <span class="strength-num">02</span>
+              <div class="strength-content">
+                <h5>INT8 Neural Quantization</h5>
+                <p>Compresses the 2D Convolutional Neural Network model from 16.8 MB to 4.2 MB using INT8 weight quantization, enabling high-speed local inference inside the engine bay.</p>
+              </div>
+            </div>
+            <div class="strength-item">
+              <span class="strength-num">03</span>
+              <div class="strength-content">
+                <h5>Active Solenoid Mitigation</h5>
+                <p>Drives physical GPIO logic gates linked to fuel line isolation solenoids and variable guide vane pitch servos for automated mechanical containment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Quick Stats & CTA -->
+        <div class="glass-card info-card" id="deck-demo">
+          <div class="card-header">
+            <h3>EDGE AI AEROVIBE CORE METRICS</h3>
+          </div>
+          <div class="card-body quick-stats-body">
+            <div class="stat-box-large">
+              <span class="stat-lbl">EDGE ENGINE CONFIGURATION</span>
+              <strong class="status-healthy" id="portal-status-label">NOMINAL / SECURED</strong>
+            </div>
+            <div class="stat-sub-row">
+              <div class="stat-sub-item">
+                <span class="stat-lbl">ROTOR TELEMETRY</span>
+                <span class="stat-val" id="portal-rotor-rpm">14,250 RPM</span>
+              </div>
+              <div class="stat-sub-item">
+                <span class="stat-lbl">EXHAUST TEMP (EGT)</span>
+                <span class="stat-val" id="portal-egt-temp">740 °C</span>
+              </div>
+            </div>
+            <div class="action-invite-banner">
+              <p>Open the live Flight Deck dashboard to manually trigger crack injection and verify the 17.2ms containment speed.</p>
+              <button class="btn-primary-action" id="go-to-flightdeck-btn">GO TO FLIGHT DECK ➔</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REDESIGNED PAGE 2: MISSION -->
+    <section id="page-mission" class="page-view">
+      <div class="hero-text-panel">
+        <div class="hero-tag">EDGE AI AEROVIBE // MISSION CONTROL</div>
+        <h2>Commercial Turbofan Acoustic Profiling & Sub-22ms Automated Mitigation</h2>
+      </div>
+      
+      <div class="mission-grid-overhaul">
+        <!-- Interactive Waterfall Timeline -->
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>COMMERCIAL AVIONICS PIPELINE FLOW</h3>
+          </div>
+          <div class="card-body">
+            <div class="hud-waterfall">
+              
+              <div class="hud-waterfall-node">
+                <div class="hud-waterfall-icon">🔑</div>
+                <div class="hud-waterfall-content">
+                  <h5>01 // FLIGHT IGNITION & CLIMB</h5>
+                  <p>Turbofan combustion initiates; compressor shaft speeds stabilize at 14,250 RPM during climb phase.</p>
+                </div>
+              </div>
+              <div class="hud-waterfall-line"></div>
+              
+              <div class="hud-waterfall-node">
+                <div class="hud-waterfall-icon">📈</div>
+                <div class="hud-waterfall-content">
+                  <h5>02 // ACOUSTIC EMISSION CAPTURE</h5>
+                  <p>High-frequency stress sound waves continuously monitored at 2.4 MSps casing rates during trans-oceanic cruise.</p>
+                </div>
+              </div>
+              <div class="hud-waterfall-line"></div>
+              
+              <div class="hud-waterfall-node">
+                <div class="hud-waterfall-icon">🎙️</div>
+                <div class="hud-waterfall-content">
+                  <h5>03 // SIGNAL COMPRESSION</h5>
+                  <p>ADC feeds raw stress data to DSP block for FFT spectrogram column vectoring to compress high-frequency noise.</p>
+                </div>
+              </div>
+              <div class="hud-waterfall-line"></div>
+              
+              <div class="hud-waterfall-node">
+                <div class="hud-waterfall-icon">🧠</div>
+                <div class="hud-waterfall-content">
+                  <h5>04 // TinyML CNN INFERENCE</h5>
+                  <p>INT8 Quantized 2D CNN model scans acoustic grids for blade micro-cracks under ETOPS flight regimes.</p>
+                </div>
+              </div>
+              <div class="hud-waterfall-line"></div>
+              
+              <div class="hud-waterfall-node">
+                <div class="hud-waterfall-icon">⚡</div>
+                <div class="hud-waterfall-content">
+                  <h5>05 // FAILSAFE MITIGATION</h5>
+                  <p>Closed-loop GPIO relay shuts fuel line & swivels variable guide vanes in 17.2ms with ARINC 429 display sync at 3.14s.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Mission Details -->
+        <div class="mission-details-right">
+          <div class="glass-card info-card">
+            <div class="card-header">
+              <h3>SYSTEM PHILOSOPHY</h3>
+            </div>
+            <div class="card-body">
+              <p class="mission-paragraph">
+                Edge AI AeroVibe aims to eliminate the delay between fault occurrence and emergency response by bringing artificial intelligence directly to the aircraft engine. Instead of relying on cloud connectivity, our system performs continuous vibration analysis, detects blade cracks within milliseconds, and enables immediate safety actions. Our mission is to improve commercial flight reliability, reduce the risk of catastrophic engine failures, and demonstrate the future of intelligent edge-based commercial aviation safety systems.
+              </p>
+            </div>
+          </div>
+
+          <div class="objectives-hud-grid">
+            <div class="glass-card objective-hud-card">
+              <div class="card-icon">⚡</div>
+              <h4>Real-Time Monitoring</h4>
+              <p>Continuous emission capture at high sampling rates.</p>
+            </div>
+            <div class="glass-card objective-hud-card">
+              <div class="card-icon">🔍</div>
+              <h4>Intelligent Detection</h4>
+              <p>Identify microscopic blade fractures before failure propagation.</p>
+            </div>
+            <div class="glass-card objective-hud-card">
+              <div class="card-icon">🛰️</div>
+              <h4>Edge AI</h4>
+              <p>100% offline neural inference on localized flight chips.</p>
+            </div>
+            <div class="glass-card objective-hud-card">
+              <div class="card-icon">🛡️</div>
+              <h4>Aviation Safety</h4>
+              <p>Sub-22ms mechanical containment bounds secured.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REDESIGNED PAGE 3: VISION -->
+    <section id="page-vision" class="page-view">
+      <div class="hero-text-panel">
+        <div class="hero-tag">EDGE AI AEROVIBE // VISION 2050</div>
+        <h2>Autonomous Systems Roadmap & Commercial Airframes</h2>
+      </div>
+
+      <div class="vision-roadmap-wrapper">
+        <div class="vision-timeline-bar"></div>
+        
+        <div class="vision-milestone-card left-side">
+          <div class="milestone-year">2025</div>
+          <div class="glass-card milestone-body">
+            <h4>A320neo Retrofitting</h4>
+            <p>Deploying standalone DSP co-processors on testbeds for closed-loop validation in domestic operations.</p>
+          </div>
+        </div>
+
+        <div class="vision-milestone-card right-side">
+          <div class="milestone-year">2030</div>
+          <div class="glass-card milestone-body">
+            <h4>Dreamliner ETOPS Calibration</h4>
+            <p>Integrating localized piezoelectric matrices directly into commercial engine casings for trans-oceanic flights.</p>
+          </div>
+        </div>
+
+        <div class="vision-milestone-card left-side">
+          <div class="milestone-year">2040</div>
+          <div class="glass-card milestone-body">
+            <h4>Autonomous Health Fleets</h4>
+            <p>Unified real-time airframe stress monitoring with decentralized digital twins across the entire Air India network.</p>
+          </div>
+        </div>
+
+        <div class="vision-milestone-card right-side">
+          <div class="milestone-year">2050</div>
+          <div class="glass-card milestone-body">
+            <h4>Vision 2050: Zero-Downtime Flight</h4>
+            <p>Self-healing architectures and active counter-torque damping systems protecting commercial flight fleets.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REDESIGNED PAGE 4: ARCHITECTURE -->
+    <section id="page-architecture" class="page-view">
+      <div class="hero-text-panel">
+        <div class="hero-tag">EDGE AI AEROVIBE // SYSTEM TOPOLOGY</div>
+        <h2>Intelligent Edge-to-Cockpit Systems Topology Map (Air India Commercial Layout)</h2>
+      </div>
+
+      <div class="architecture-main-grid">
+        
+        <!-- Animated System Topology Card -->
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>PROPULSION DIGITAL TWIN DATA PATHWAY</h3>
+          </div>
+          <div class="card-body svg-diagram-body">
+            
+            <div class="telemetry-hud-overlay">
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">SYSTEM RPM</span>
+                <strong class="hud-tele-val text-green" id="hud-rpm">14,250 RPM</strong>
+              </div>
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">EXHAUST TEMP</span>
+                <strong class="hud-tele-val text-green" id="hud-temp">740 °C</strong>
+              </div>
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">CASING STRESS</span>
+                <strong class="hud-tele-val text-green" id="hud-vib">0.05 G</strong>
+              </div>
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">TFLite CONFIDENCE</span>
+                <strong class="hud-tele-val text-green" id="hud-conf">99.8%</strong>
+              </div>
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">CLOSED-LOOP TIME</span>
+                <strong class="hud-tele-val text-cyan">17.2 ms</strong>
+              </div>
+              <div class="hud-tele-card">
+                <span class="hud-tele-lbl">FLIGHT CPU LOAD</span>
+                <strong class="hud-tele-val text-cyan">14%</strong>
+              </div>
+            </div>
+
+            <svg viewBox="0 0 960 550" class="arch-svg-diagram">
+              <defs>
+                <marker id="arrowhead-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#00f0ff"/>
+                </marker>
+                <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#ff0055"/>
+                </marker>
+                <linearGradient id="spectrogram-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#ff0055" />
+                  <stop offset="50%" stop-color="#ffaa00" />
+                  <stop offset="100%" stop-color="#00f0ff" />
+                </linearGradient>
+              </defs>
+
+              <!-- Node 1: CFM LEAP / GEnx -->
+              <g transform="translate(40, 60)">
+                <rect x="0" y="0" width="120" height="90" rx="8" class="arch-node-box" />
+                <path d="M 15 45 Q 30 35, 45 40 T 75 40 T 105 45" fill="none" stroke="#64748b" stroke-width="1.5" />
+                <line x1="20" y1="45" x2="100" y2="45" stroke="#00f0ff" stroke-width="2" stroke-dasharray="3 3" class="spinning" />
+                <circle cx="60" cy="45" r="18" fill="none" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="4 2" />
+                <text x="60" y="80" class="arch-node-txt">CFM LEAP/GEnx</text>
+              </g>
+
+              <!-- Node 2: Acoustic Sensor -->
+              <g transform="translate(230, 60)">
+                <rect x="0" y="0" width="120" height="90" rx="8" class="arch-node-box" />
+                <circle cx="60" cy="40" r="14" fill="none" stroke="#00f0ff" stroke-width="2" />
+                <circle cx="60" cy="40" r="22" fill="none" stroke="#ff0055" stroke-width="1" stroke-dasharray="3 4" class="pulse" />
+                <text x="60" y="72" class="arch-node-txt">Piezo Sensor</text>
+                <text x="60" y="82" class="arch-node-subtxt">(Acoustic casing)</text>
+              </g>
+
+              <!-- Node 3: ESP32 Board -->
+              <g transform="translate(420, 60)">
+                <rect x="0" y="0" width="120" height="90" rx="8" class="arch-node-box" />
+                <rect x="40" y="20" width="40" height="30" rx="2" fill="#1b2535" stroke="#00f0ff" stroke-width="1" />
+                <line x1="45" y1="15" x2="45" y2="20" stroke="#00f0ff" stroke-width="1.5" />
+                <line x1="55" y1="15" x2="55" y2="20" stroke="#00f0ff" stroke-width="1.5" />
+                <line x1="65" y1="15" x2="65" y2="20" stroke="#00f0ff" stroke-width="1.5" />
+                <line x1="75" y1="15" x2="75" y2="20" stroke="#00f0ff" stroke-width="1.5" />
+                <text x="60" y="72" class="arch-node-txt">ESP32 DSP</text>
+                <text x="60" y="82" class="arch-node-subtxt">(2.4MSps ADC)</text>
+              </g>
+
+              <!-- Node 4: FFT DSP -->
+              <g transform="translate(620, 60)">
+                <rect x="0" y="0" width="160" height="90" rx="8" class="arch-node-box" />
+                
+                <!-- Live Oscillating Waveform -->
+                <path d="M 15 35 Q 30 15, 45 35 T 75 35 T 105 35" fill="none" stroke="#00f0ff" stroke-width="1.5">
+                  <animate attributeName="d" dur="1.5s" repeatCount="indefinite"
+                           values="M 15 35 Q 30 15, 45 35 T 75 35 T 105 35;
+                                   M 15 35 Q 30 55, 45 35 T 75 35 T 105 35;
+                                   M 15 35 Q 30 15, 45 35 T 75 35 T 105 35" />
+                </path>
+                
+                <!-- Color Spectrogram Bar Chart -->
+                <g transform="translate(115, 20)">
+                  <rect x="0" y="10" width="6" height="20" fill="url(#spectrogram-grad)" />
+                  <rect x="8" y="5" width="6" height="25" fill="url(#spectrogram-grad)" />
+                  <rect x="16" y="15" width="6" height="15" fill="url(#spectrogram-grad)" />
+                  <rect x="24" y="0" width="6" height="30" fill="url(#spectrogram-grad)" />
+                </g>
+                
+                <text x="80" y="72" class="arch-node-txt">FFT Processing</text>
+                <text x="80" y="82" class="arch-node-subtxt">(Acoustic Spectrogram)</text>
+              </g>
+
+              <!-- Node 5: TinyML CNN Brain -->
+              <g transform="translate(620, 240)">
+                <rect x="0" y="0" width="160" height="120" rx="8" class="arch-node-box" />
+                
+                <!-- Neural Network Nodes -->
+                <g class="neural-cluster">
+                  <circle cx="30" cy="30" r="4" fill="#00f0ff" />
+                  <circle cx="30" cy="60" r="4" fill="#00f0ff" />
+                  <circle cx="30" cy="90" r="4" fill="#00f0ff" />
+                  
+                  <circle cx="80" cy="45" r="4" fill="#00f0ff" />
+                  <circle cx="80" cy="75" r="4" fill="#00f0ff" />
+                  
+                  <circle cx="130" cy="60" r="4" fill="#ff0055" />
+                  
+                  <line x1="30" y1="30" x2="80" y2="45" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                  <line x1="30" y1="60" x2="80" y2="45" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                  <line x1="30" y1="60" x2="80" y2="75" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                  <line x1="30" y1="90" x2="80" y2="75" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                  <line x1="80" y1="45" x2="130" y2="60" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                  <line x1="80" y1="75" x2="130" y2="60" stroke="rgba(0,240,255,0.4)" stroke-width="1" />
+                </g>
+                
+                <text x="80" y="102" class="arch-node-txt">TFLite CNN</text>
+                <text x="80" y="112" class="arch-node-subtxt">(INT8 Quantized Brain)</text>
+              </g>
+
+              <!-- Node 6: Decision Engine -->
+              <g transform="translate(390, 255)">
+                <rect x="0" y="0" width="150" height="90" rx="8" class="arch-node-box" />
+                <path d="M 50 35 L 100 35 M 75 25 L 75 55" fill="none" stroke="#00f0ff" stroke-width="1.5" />
+                <path d="M 40 45 L 60 45 Q 50 55, 40 45 Z M 90 45 L 110 45 Q 100 55, 90 45 Z" fill="none" stroke="#00f0ff" stroke-width="1" />
+                <text x="75" y="72" class="arch-node-txt">Decision Engine</text>
+                <text x="75" y="82" class="arch-node-subtxt">(Autonomous Failsafe)</text>
+              </g>
+
+              <!-- Node 7: Pilot Alert & Solenoid -->
+              <g transform="translate(100, 255)">
+                <rect x="0" y="0" width="200" height="90" rx="8" class="arch-node-box border-red" />
+                
+                <!-- Solenoid Valve Symbol -->
+                <path d="M 30 35 L 50 55 L 30 55 L 50 35 Z M 40 25 L 40 35" fill="none" stroke="#ff0055" stroke-width="2" />
+                <rect x="35" y="18" width="10" height="8" fill="#ff0055" />
+                
+                <!-- Alarm Horn -->
+                <path d="M 140 45 L 160 30 L 160 60 L 140 45 Z M 165 40 A 8 8 0 0 1 165 50" fill="none" stroke="#ff0055" stroke-width="2" />
+                
+                <text x="100" y="72" class="arch-node-txt text-red">Pilot Alert & Actuators</text>
+                <text x="100" y="82" class="arch-node-subtxt">(Solenoid Fuel Isolation)</text>
+              </g>
+
+              <!-- Node 8: Safe Flight -->
+              <g transform="translate(100, 410)">
+                <rect x="0" y="0" width="200" height="90" rx="8" class="arch-node-box" />
+                <path d="M 80 40 L 120 40 L 100 25 Z" fill="none" stroke="#00f0ff" stroke-width="2" />
+                <line x1="85" y1="45" x2="115" y2="45" stroke="#00f0ff" stroke-width="1.5" />
+                <text x="100" y="72" class="arch-node-txt">Safe Flight Operations</text>
+                <text x="100" y="82" class="arch-node-subtxt">(Avionics Stabilized)</text>
+              </g>
+
+              <!-- Glowing Flow Paths -->
+              <path id="flow-p1" d="M 160 105 L 230 105" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p2" d="M 350 105 L 420 105" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p3" d="M 540 105 L 620 105" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p4" d="M 700 150 L 700 240" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p5" d="M 620 300 L 540 300" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p6" d="M 390 300 L 300 300" fill="none" stroke="rgba(255, 0, 85, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path id="flow-p7" d="M 200 345 L 200 410" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="1.5" stroke-dasharray="3 3" />
+
+              <!-- Animated Data Packets -->
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="2.5s" repeatCount="indefinite" path="M 160 105 L 230 105" />
+              </circle>
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="2s" repeatCount="indefinite" path="M 350 105 L 420 105" />
+              </circle>
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="2.5s" repeatCount="indefinite" path="M 540 105 L 620 105" />
+              </circle>
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="3s" repeatCount="indefinite" path="M 700 150 L 700 240" />
+              </circle>
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="2.2s" repeatCount="indefinite" path="M 620 300 L 540 300" />
+              </circle>
+              <circle r="4" fill="#ff0055">
+                <animateMotion dur="1.8s" repeatCount="indefinite" path="M 390 300 L 300 300" />
+              </circle>
+              <circle r="4" fill="#00f0ff">
+                <animateMotion dur="2s" repeatCount="indefinite" path="M 200 345 L 200 410" />
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>WHY EDGE AI AEROVIBE?</h3>
+          </div>
+          <div class="card-body objectives-cards-grid">
+            <div class="glass-card objective-card">
+              <div class="why-icon">⚡</div>
+              <h5>Ultra Low Latency</h5>
+              <p>&lt;22 ms response time</p>
+            </div>
+            <div class="glass-card objective-card">
+              <div class="why-icon">🛰</div>
+              <h5>Offline Operation</h5>
+              <p>No internet dependency</p>
+            </div>
+            <div class="glass-card objective-card">
+              <div class="why-icon">🧠</div>
+              <h5>TinyML Intelligence</h5>
+              <p>Optimized CNN inference</p>
+            </div>
+            <div class="glass-card objective-card">
+              <div class="why-icon">🛡</div>
+              <h5>Flight Safety</h5>
+              <p>Early anomaly detection</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>TECHNOLOGY TOPOLOGY STACK</h3>
+          </div>
+          <div class="card-body">
+            <div class="tech-stack-flow">
+              <span class="tech-badge">HTML5</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">CSS3</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">JavaScript</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">TensorFlow Lite</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">TinyML</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">FFT</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">ESP32</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">Raspberry Pi</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">Google Gemini</span>
+              <span class="tech-arrow">➔</span>
+              <span class="tech-badge">Vercel Deployment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5: AVIONICS FLIGHT DECK (Spacious Live Simulator & SVG Engine Digital Twin) -->
+    <section id="page-flightdeck" class="page-view">
+      <!-- Air India Active Configuration Selector -->
+      <div class="flight-profile-config" style="display: flex; align-items: center; justify-content: space-between; background: rgba(8, 15, 29, 0.85); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: var(--shadow-cyan); backdrop-filter: blur(12px);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-family: var(--font-hud); font-size: 0.78rem; color: var(--primary-cyan); font-weight: 800; letter-spacing: 0.5px;">ACTIVE FLIGHT PROFILE:</span>
+          <select id="flight-profile-select" style="background: rgba(13, 22, 38, 0.85); border: 1px solid var(--primary-cyan); color: #ffffff; font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; outline: none;">
+            <option value="domestic">Air India Flight AI-401 // Airbus A320neo (Domestic)</option>
+            <option value="international" selected>Air India Flight AI-101 // Boeing 787-8 Dreamliner (Active Trans-Oceanic ETOPS Mode)</option>
+          </select>
+        </div>
+        <div class="badge-airgapped" id="flight-profile-mode-badge" style="color: var(--primary-cyan); border-color: var(--primary-cyan);">ACTIVE ETOPS COMPLIANT</div>
+      </div>
+
+      <div class="dashboard-grid">
+        
+        <!-- COLUMN 1: LIVE SENSOR FEED OSCILLOSCOPES & LIVE FLIGHT MAP -->
+        <div class="panel glass-card dsp-panel">
+          <div class="panel-header">
+            <span class="panel-icon">⚡</span>
+            <h2>HIGH-FREQUENCY DSP DUAL-SENSOR OSCILLOSCOPES</h2>
+          </div>
+          <div class="panel-body spacious-charts">
+            <div class="chart-container">
+              <div class="chart-header">
+                <span class="chart-title">Casing Piezoelectric Sensor (20kHz Acoustic Stress Waves)</span>
+                <span class="chart-value" id="osc-amplitude">0.12 V</span>
+              </div>
+              <canvas id="oscilloscope-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+              <div class="chart-header">
+                <span class="chart-title">ADXL345 Accelerometer (Low-Freq Shaft Vibration)</span>
+                <span class="chart-value" id="vib-amplitude">0.05 G</span>
+              </div>
+              <canvas id="vibration-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+              <div class="chart-header">
+                <span class="chart-title">Acoustic Spectrogram Waterfall (ESP32 FFT Compression)</span>
+                <span class="chart-value">64-Bin Resolution</span>
+              </div>
+              <canvas id="spectrogram-canvas"></canvas>
+            </div>
+
+            <!-- LIVE WORLD MAP WIDGET -->
+            <div class="live-map-container">
+              <div class="map-header">
+                <span class="map-title" id="map-route-title">AIR INDIA TRANS-OCEANIC ROUTE (AI-101) [ETOPS]</span>
+                <span class="map-status status-healthy" id="map-connection-label">SATELLITE SYNC ACTIVE</span>
+              </div>
+              <div class="svg-map-wrapper">
+                <svg viewBox="0 0 400 120" class="world-map-svg" id="world-map-graphic">
+                  <path d="M 0 30 Q 15 15, 30 20 T 60 10 T 90 20 T 110 35 L 110 120 L 0 120 Z" fill="#1b2535" opacity="0.6"/>
+                  <path d="M 290 20 Q 320 20, 350 40 T 380 40 T 400 50 L 400 120 L 290 120 Z" fill="#1b2535" opacity="0.6"/>
+                  <path d="M 80 40 Q 200 15, 320 40" fill="none" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="4 4" />
+                  
+                  <!-- DIVERSION PATH ROUTING TO MUMBAI HUB (BOM) -->
+                  <path d="M 120 32 Q 160 50, 180 80" fill="none" stroke="#ffaa00" stroke-width="1.5" stroke-dasharray="3 3" id="map-diversion-path" style="display: none;" />
+                  <g id="diversion-hub-marker" style="display: none;">
+                    <circle cx="180" cy="80" r="4" fill="#ffaa00" />
+                    <text x="180" y="93" fill="#ffaa00" font-family="var(--font-mono)" font-size="7px" text-anchor="middle">DIVERSION HUB (BOM)</text>
+                  </g>
+
+                  <circle cx="200" cy="30" r="45" fill="rgba(255, 0, 85, 0.05)" stroke="rgba(255, 0, 85, 0.25)" stroke-width="1" stroke-dasharray="2 3" />
+                  <text x="200" y="55" class="map-text-danger" text-anchor="middle">NO WAN LINK AREA</text>
+                  <g id="map-plane-group">
+                    <circle cx="120" cy="32" r="6" fill="#00f0ff" class="map-plane-glow" />
+                    <circle cx="120" cy="32" r="3" fill="#ffffff" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COLUMN 2: 3D-STYLE DIGITAL TWIN ENGINE & PREDICTIVE PdM -->
+        <div class="panel glass-card ml-actuation-panel">
+          <div class="panel-header">
+            <span class="panel-icon">⚙️</span>
+            <h2>PROPULSION DIGITAL TWIN & CLOSED-LOOP ACTUATORS</h2>
+          </div>
+          <div class="panel-body twin-body">
+            
+            <!-- 3D Engine Cross-Section Digital Twin SVG -->
+            <div class="sub-panel digital-twin-engine-card">
+              <h3>Rolls-Royce Engine Cross-Section Twin</h3>
+              <div class="engine-cross-section-wrapper">
+                <svg viewBox="0 0 450 200" class="engine-cross-section-svg" id="engine-cross-section">
+                  <defs>
+                    <pattern id="twin-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 240, 255, 0.02)" stroke-width="1"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#twin-grid)" />
+                  
+                  <path d="M 30 40 L 120 30 L 360 40 L 420 60 L 420 140 L 360 160 L 120 170 L 30 160 Z" fill="none" stroke="#2d3b4e" stroke-width="2.5" />
+                  
+                  <g id="airflow-chevrons-group" class="moving-chevrons">
+                    <path d="M 40 70 L 50 70 L 45 60 Z" class="airflow-arrow" />
+                    <path d="M 40 130 L 50 130 L 45 140 Z" class="airflow-arrow" />
+                    <path d="M 140 70 L 150 70 L 145 65 Z" class="airflow-arrow" />
+                    <path d="M 140 130 L 150 130 L 145 135 Z" class="airflow-arrow" />
+                    <path d="M 250 80 L 260 80 L 255 75 Z" class="airflow-arrow" />
+                    <path d="M 250 120 L 260 120 L 255 125 Z" class="airflow-arrow" />
+                  </g>
+
+                  <g id="bearings-group">
+                    <rect x="180" y="86" width="16" height="28" rx="2" fill="#1b2535" stroke="#00f0ff" stroke-width="1" id="bearing-front" />
+                    <circle cx="188" cy="93" r="3" fill="#64748b" id="bearing-ball-1" />
+                    <circle cx="188" cy="107" r="3" fill="#64748b" id="bearing-ball-2" />
+                    
+                    <rect x="330" y="86" width="16" height="28" rx="2" fill="#1b2535" stroke="#00f0ff" stroke-width="1" id="bearing-rear" />
+                    <circle cx="338" cy="93" r="3" fill="#64748b" id="bearing-ball-3" />
+                    <circle cx="338" cy="107" r="3" fill="#64748b" id="bearing-ball-4" />
+                  </g>
+
+                  <line x1="80" y1="100" x2="380" y2="100" stroke="#1d2736" stroke-width="12" stroke-linecap="round" />
+                  <line x1="80" y1="100" x2="380" y2="100" stroke="#00f0ff" stroke-width="2" stroke-dasharray="10 15" id="spinning-shaft-line" class="spinning" />
+                  
+                  <g id="vgv-vanes-group">
+                    <line x1="60" y1="46" x2="68" y2="92" class="vgv-vane-line" id="vgv-top" />
+                    <line x1="60" y1="154" x2="68" y2="108" class="vgv-vane-line" id="vgv-bottom" />
+                  </g>
+
+                  <g id="rotor-cross-blades" class="spinning">
+                    <line x1="120" y1="42" x2="120" y2="158" class="rotor-blade-line" />
+                    <line x1="145" y1="44" x2="145" y2="156" class="rotor-blade-line" />
+                    <g id="rotor-fracture-blade-row">
+                      <line x1="170" y1="46" x2="170" y2="154" class="rotor-blade-line" />
+                      <path d="M 170 50 L 166 65 L 174 80 L 167 95 L 172 110" fill="none" stroke="#ff0055" stroke-width="2.5" id="blade-crack-line" class="blade-crack-path" />
+                    </g>
+                    <line x1="200" y1="50" x2="200" y2="150" class="rotor-blade-line" />
+                  </g>
+
+                  <path d="M 230 10 L 230 65 L 245 65" fill="none" stroke="#00ff66" stroke-width="4" id="fuel-pipe-line" />
+                  <circle cx="230" cy="30" r="3" fill="#ffffff" id="fuel-flow-particle" />
+                  
+                  <g id="combustion-flames">
+                    <path d="M 255 70 Q 280 60, 310 75 Q 280 80, 255 70" fill="rgba(255, 170, 0, 0.4)" stroke="#ffaa00" stroke-width="1.5" class="flame-flicker" />
+                    <path d="M 255 130 Q 280 120, 310 135 Q 280 140, 255 130" fill="rgba(255, 170, 0, 0.4)" stroke="#ffaa00" stroke-width="1.5" class="flame-flicker" />
+                  </g>
+                  
+                  <circle cx="170" cy="42" r="5" fill="#ff0055" id="piezo-sensor-dot" />
+                  <line x1="170" y1="42" x2="170" y2="15" stroke="#ff0055" stroke-dasharray="1 2" stroke-width="1" />
+                  <text x="175" y="25" class="sensor-tag-text">20kHz Piezo</text>
+                </svg>
+              </div>
+              <div class="rotor-specs-badge">
+                <span>Rotor Status:</span>
+                <strong id="rotor-status-badge-text" class="status-healthy">SPINNING NOMINAL // 14,250 RPM</strong>
+              </div>
+            </div>
+
+            <!-- PRECAUTIONARY DIVERSION PROGNOSTICS WARNING BANNER -->
+            <div id="prognostics-warning-banner" style="display: none; background: rgba(255, 170, 0, 0.1); border: 1px dashed var(--warning-amber); border-radius: 6px; padding: 10px 15px; font-size: 0.72rem; color: var(--warning-amber); font-family: var(--font-hud); margin-bottom: 5px; text-align: center; line-height: 1.45;"></div>
+
+            <!-- TRI-LAYER SAFETY VALIDATION SYSTEM PANEL -->
+            <div class="sub-panel safety-validation-card">
+              <h3>Tri-Layer Safety Validation (False-Alarm Filters)</h3>
+              <div class="safety-validation-grid" style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 8px;">
+                <div class="safety-filter-item" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(0, 255, 102, 0.02); border: 1px solid rgba(0, 255, 102, 0.12); border-radius: 4px;">
+                  <div>
+                    <strong style="font-family: var(--font-hud); font-size: 0.75rem; color: #ffffff; display: block;">Filter A: Sensor Fusion Protocol</strong>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">Verifies casing acoustic stress against 3-axis vibration G-forces.</span>
+                  </div>
+                  <span class="status-tag" style="color: var(--safe-green); font-family: var(--font-mono); font-size: 0.65rem; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,102,0.4);">ACTIVE</span>
+                </div>
+                
+                <div class="safety-filter-item" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(0, 240, 255, 0.02); border: 1px solid rgba(0, 240, 255, 0.12); border-radius: 4px;">
+                  <div>
+                    <strong style="font-family: var(--font-hud); font-size: 0.75rem; color: #ffffff; display: block;">Filter B: Temporal Voting Buffer</strong>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">3,000ms safety window filters out transient transient spikes.</span>
+                  </div>
+                  <span class="status-tag" style="color: var(--primary-cyan); font-family: var(--font-mono); font-size: 0.65rem; font-weight: bold; text-shadow: 0 0 5px rgba(0,240,255,0.4);">INTEGRATED</span>
+                </div>
+                
+                <div class="safety-filter-item" id="filter-c-box" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255, 170, 0, 0.02); border: 1px solid rgba(255, 170, 0, 0.12); border-radius: 4px; transition: all 0.3s ease;">
+                  <div>
+                    <strong style="font-family: var(--font-hud); font-size: 0.75rem; color: #ffffff; display: block;">Filter C: Human-In-The-Loop Override</strong>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);" id="filter-c-desc">Interactive countdown permits manual pilot bypass before isolation.</span>
+                  </div>
+                  <span class="status-tag" id="filter-c-status" style="color: var(--warning-amber); font-family: var(--font-mono); font-size: 0.65rem; font-weight: bold; text-shadow: 0 0 5px rgba(255,170,0,0.4);">ARMED</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ANTIGRAVITY ENGINE CASING PARTICLE TELEMETRY -->
+            <div class="sub-panel particle-field-card">
+              <h3>Antigravity Casing Stress Particle Telemetry</h3>
+              <div class="particle-canvas-wrapper" style="height: 100px; position: relative;">
+                <canvas id="particle-canvas" style="position: absolute; top:0; left:0; width:100%; height:100%; background:#040609; border-radius:4px; border: 1px solid rgba(0, 240, 255, 0.05);"></canvas>
+              </div>
+            </div>
+
+            <!-- PREDICTIVE PdM PROGNOSTICS CARD -->
+            <div class="sub-panel prognostic-maintenance-card">
+              <h3>Predictive Maintenance (PdM) & Prognostics</h3>
+              <div class="pdm-grid">
+                <div class="pdm-item">
+                  <span class="pdm-lbl">Remaining Useful Life (RUL)</span>
+                  <strong class="pdm-val text-green" id="pdm-rul">127 Hours</strong>
+                </div>
+                <div class="pdm-item">
+                  <span class="pdm-lbl">Bearing Wear Index</span>
+                  <strong class="pdm-val text-green" id="pdm-wear">12%</strong>
+                </div>
+                <div class="pdm-item">
+                  <span class="pdm-lbl">Maintenance Schedule</span>
+                  <strong class="pdm-val text-green" id="pdm-sched">within 8 flights</strong>
+                </div>
+                <div class="pdm-item-large">
+                  <div class="pdm-ring-wrapper">
+                    <svg viewBox="0 0 36 36" class="pdm-ring-svg">
+                      <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3" />
+                      <path class="ring-fg" id="pdm-health-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#00ff66" stroke-width="3" stroke-dasharray="98, 100" />
+                    </svg>
+                    <div class="pdm-ring-text" id="pdm-health-text">98%</div>
+                  </div>
+                  <div class="pdm-health-desc">System Structural Health</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actuators and Latch Cover -->
+            <div class="sub-panel actuation-card">
+              <h3>Emergency Actuator Relays</h3>
+              
+              <div class="actuation-devices">
+                <div class="device-box" id="fuel-valve-box">
+                  <div class="device-status-indicator green" id="valve-light"></div>
+                  <div class="device-content">
+                    <span class="device-name">Fuel Shutoff Valve (Solenoid)</span>
+                    <span class="device-state state-open" id="valve-state">OPEN (FUEL FLOW ACTIVE)</span>
+                  </div>
+                  <div class="valve-icon-wrapper">
+                    <svg viewBox="0 0 100 100" class="valve-svg" id="valve-graphic">
+                      <circle cx="50" cy="50" r="35" class="valve-bg-circle" />
+                      <line x1="50" y1="15" x2="50" y2="85" class="valve-stem" />
+                      <rect x="25" y="42" width="50" height="16" rx="4" class="valve-gate" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="device-box" id="vgv-box">
+                  <div class="device-status-indicator green" id="vgv-light"></div>
+                  <div class="device-content">
+                    <span class="device-name">Variable Guide Vanes (VGV)</span>
+                    <span class="device-state state-normal" id="vgv-state">NORMAL PITCH (15.5°)</span>
+                  </div>
+                  <div class="vgv-icon-wrapper">
+                    <svg viewBox="0 0 120 120" class="vgv-svg">
+                      <circle cx="60" cy="60" r="45" stroke="#222c38" stroke-width="2" fill="none" />
+                      <g id="vane-group">
+                        <line x1="60" y1="60" x2="60" y2="20" class="vane" id="vane-1" />
+                        <line x1="60" y1="60" x2="60" y2="100" class="vane" id="vane-2" />
+                        <line x1="60" y1="60" x2="20" y2="60" class="vane" id="vane-3" />
+                        <line x1="60" y1="60" x2="100" y2="60" class="vane" id="vane-4" />
+                        <line x1="60" y1="60" x2="31.7" y2="31.7" class="vane" id="vane-5" />
+                        <line x1="60" y1="60" x2="88.3" y2="88.3" class="vane" id="vane-6" />
+                        <line x1="60" y1="60" x2="31.7" y2="88.3" class="vane" id="vane-7" />
+                        <line x1="60" y1="60" x2="88.3" y2="31.7" class="vane" id="vane-8" />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- FDR Flight Recorder Playback Scrubber Control -->
+              <div class="blackbox-utility-card">
+                <h5>FLIGHT DATA RECORDER REPLAY CONTROLLER</h5>
+                <div class="fdr-scrubber-bar">
+                  <div class="fdr-buttons">
+                    <button class="btn-fdr-ctrl" id="btn-fdr-play" title="Play Flight Telemetry">▶</button>
+                    <button class="btn-fdr-ctrl" id="btn-fdr-pause" title="Pause Telemetry">⏸</button>
+                    <button class="btn-fdr-ctrl btn-orange" id="btn-fdr-replay" title="Replay Closed-Loop Trip Sequence">REPLAY TRIP</button>
+                  </div>
+                  <div class="fdr-slider-wrapper">
+                    <span class="scrub-label" id="fdr-time-label">0.0 ms</span>
+                    <input type="range" id="fdr-slider" min="0" max="20" step="0.5" value="0">
+                    <span class="scrub-label">20.0 ms</span>
+                  </div>
+                </div>
+                <div class="fdr-state-label" id="fdr-status-badge">FDR SOURCE: LIVE TELEMETRY</div>
+              </div>
+
+              <!-- Guard Cover Latch -->
+              <div class="test-injector-container">
+                <div class="guarded-switch-wrapper" style="width: 100%;">
+                  <label class="switch-guard-label">SAFETY INJECT COVER</label>
+                  <div class="physical-switch-housing" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                    <button class="guard-cover" id="switch-guard" style="width: 100%;">GUARD CLOSED</button>
+                    <div class="inject-buttons-row" style="display: flex; gap: 8px; width: 100%;">
+                      <button class="inject-button disabled" id="inject-severe-btn" style="flex: 1; padding: 10px 4px; font-size: 0.62rem;" disabled>INJECT SEVERE STRIKE</button>
+                      <button class="inject-button disabled" id="inject-soft-btn" style="flex: 1; padding: 10px 4px; font-size: 0.62rem;" disabled>INJECT SOFT IMPACT</button>
+                    </div>
+                    <button class="inject-button disabled" id="veto-override-btn" style="width: 100%; display: none; background: rgba(255, 170, 0, 0.15); border: 1px solid var(--warning-amber); color: var(--warning-amber);" disabled>VETO AUTOMATED SHUTDOWN</button>
+                  </div>
+                </div>
+                <button class="reset-button" id="reset-system-btn" style="width: 100%; margin-top: 10px;">RESET SAFETY LOOP</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE LOG -->
+        <div class="panel glass-card timeline-panel">
+          <div class="panel-header">
+            <span class="panel-icon">⏱️</span>
+            <h2>HIGH-RESOLUTION TRIP TIMELINE LOG</h2>
+          </div>
+          <div class="panel-body">
+            <div class="timeline-summary-bar">
+              <div class="summary-item">
+                <span class="summary-lbl">Sampling (ADC)</span>
+                <span class="summary-val" id="lat-sample">1.2 ms</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-lbl">FFT DSP</span>
+                <span class="summary-val" id="lat-fft">3.1 ms</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-lbl">CNN Inference</span>
+                <span class="summary-val" id="lat-cnn">11.4 ms</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-lbl">GPIO Actuation</span>
+                <span class="summary-val" id="lat-gpio">1.5 ms</span>
+              </div>
+              <div class="summary-item highlight">
+                <span class="summary-lbl">Total Closed-Loop</span>
+                <strong class="text-green" id="total-latency-val">17.2 ms</strong>
+              </div>
+            </div>
+            <div class="timeline-wrapper" id="trip-timeline">
+              <div class="timeline-empty-state" id="timeline-placeholder">
+                Awaiting safety trip event. Toggle the switch cover, inject a crack, and witness the sub-22ms closed-loop timeline here.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 6: TINYML CORE (CNN Architecture & AI Explainability/XAI) -->
+    <section id="page-tinyml" class="page-view">
+      <div class="tinyml-layout-grid">
+        
+        <!-- CNN Layer Activations Visualizer -->
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>TinyML (TensorFlow Lite INT8) LAYER PIPELINE</h3>
+          </div>
+          <div class="card-body visual-cnn-body">
+            <p class="cnn-visual-intro">Inspect the activation sequence layer dims of the compressed CNN model on the Raspberry Pi 4:</p>
+            
+            <div class="cnn-interactive-pipeline">
+              <div class="network-node active" title="Input Spectrogram: 2D array of 64 frequency bins x 32 time slices. Stores compressed sound waves.">
+                <div class="node-icon">📊</div>
+                <h5>Input (Spectrogram)</h5>
+                <span class="node-dims">64 × 32 × 1</span>
+                <span class="node-details">Format: INT8 (-128 to 127)</span>
+              </div>
+              <div class="network-connector">➔</div>
+              
+              <div class="network-node" title="Conv2D Layer: 16 filters (3x3 kernels). Extracts vertical and horizontal acoustic crack wave transient edges.">
+                <div class="node-icon">🎛️</div>
+                <h5>Conv2D (INT8)</h5>
+                <span class="node-dims">62 × 30 × 16</span>
+                <span class="node-details">Kernels: 16 (3x3) // Stride: 1</span>
+              </div>
+              <div class="network-connector">➔</div>
+              
+              <div class="network-node" title="MaxPool2D Layer: Sub-samples spatial resolution (2x2 pool, stride 2) to reduce compute time and parameters.">
+                <div class="node-icon">📉</div>
+                <h5>MaxPool2D</h5>
+                <span class="node-dims">31 × 15 × 16</span>
+                <span class="node-details">Pool Size: 2x2 // Stride: 2</span>
+              </div>
+              <div class="network-connector">➔</div>
+              
+              <div class="network-node" title="Dense Layer 1: Fully connected array with Rectified Linear Unit activation. Maps structural features.">
+                <div class="node-icon">⚡</div>
+                <h5>Dense ReLU (INT8)</h5>
+                <span class="node-dims">64 units</span>
+                <span class="node-details">Weights: 476,224 // Bias: 64</span>
+              </div>
+              <div class="network-connector">➔</div>
+              
+              <div class="network-node output" title="Softmax Dense: Outputs probability distribution across two target classes (HEALTHY vs. BLADE_CRACK).">
+                <div class="node-icon">🎯</div>
+                <h5>Softmax Output</h5>
+                <span class="node-dims">2 units</span>
+                <span class="node-details">Output: probability (0.0 to 1.0)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPLAINABLE AI (XAI) PANEL & CONFUSION MATRIX -->
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>CNN EXPLAINABILITY & PROTOTYPE CONFUSION MATRIX</h3>
+          </div>
+          <div class="card-body xai-body">
+            
+            <!-- Confusion Matrix Display -->
+            <div class="xai-widget-container">
+              <h5>Prototype Confusion Matrix (1,200 acoustic checks)</h5>
+              <table class="confusion-matrix-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Pred. Healthy</th>
+                    <th>Pred. Fracture</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Actual Healthy</th>
+                    <td class="cell-matrix safe">99.8% <small>(TN)</small></td>
+                    <td class="cell-matrix error">0.2% <small>(FP)</small></td>
+                  </tr>
+                  <tr>
+                    <th>Actual Fracture</th>
+                    <td class="cell-matrix error">0.6% <small>(FN)</small></td>
+                    <td class="cell-matrix critical">99.4% <small>(TP)</small></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="xai-labels-row">
+                <span>Verified prototype validation metrics.</span>
+              </div>
+            </div>
+
+            <!-- Heatmap Display -->
+            <div class="xai-widget-container">
+              <h5>Spectrogram Activation Attention Heatmap</h5>
+              <div class="attention-heatmap-visualizer">
+                <div class="heatmap-grid" id="heatmap-grid-element"></div>
+                <span class="attention-tag-text" id="attention-tag">Nominal Ambient Background Noise</span>
+              </div>
+            </div>
+
+            <!-- Confidence Curve Chart -->
+            <div class="xai-widget-container">
+              <h5>Forward-Pass Confidence Rise Time (11.4ms window)</h5>
+              <div class="confidence-bar-chart" id="confidence-bar-chart">
+                <div class="chart-column" style="height: 5%;" title="t=0ms: 0.1%"></div>
+                <div class="chart-column" style="height: 8%;" title="t=2.2ms: 1.2%"></div>
+                <div class="chart-column" style="height: 12%;" title="t=4.4ms: 2.8%"></div>
+                <div class="chart-column" style="height: 18%;" title="t=6.6ms: 6.4%"></div>
+                <div class="chart-column" style="height: 48%;" title="t=8.8ms: 48.2%"></div>
+                <div class="chart-column" style="height: 94%;" title="t=11.4ms: 99.4%" id="final-confidence-bar"></div>
+              </div>
+              <div class="xai-labels-row">
+                <span>0.0ms</span>
+                <span>Inference Timeline</span>
+                <span>11.4ms</span>
+              </div>
+            </div>
+
+            <!-- Feature Importance Channels -->
+            <div class="xai-widget-container">
+              <h5>Key Frequency Band Feature Importance</h5>
+              <div class="feature-importance-list">
+                <div class="feature-item">
+                  <span class="feat-name">Band 42 (Piezo High-Freq 20-30kHz)</span>
+                  <div class="feat-bar-outer"><div class="feat-bar-inner" id="feat-bar-1" style="width: 25%;"></div></div>
+                  <strong class="feat-val" id="feat-val-1">0.25</strong>
+                </div>
+                <div class="feature-item">
+                  <span class="feat-name">Band 38 (Stress Wave Harmonic 18-20kHz)</span>
+                  <div class="feat-bar-outer"><div class="feat-bar-inner" id="feat-bar-2" style="width: 15%;"></div></div>
+                  <strong class="feat-val" id="feat-val-2">0.15</strong>
+                </div>
+                <div class="feature-item">
+                  <span class="feat-name">Band 4 (Rotor Speed Low-Freq 100-300Hz)</span>
+                  <div class="feat-bar-outer"><div class="feat-bar-inner" id="feat-bar-3" style="width: 45%;"></div></div>
+                  <strong class="feat-val" id="feat-val-3">0.45</strong>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Latency and benchmarks -->
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>TFLite INT8 MODEL BENCHMARKS & secondary stats</h3>
+          </div>
+          <div class="card-body">
+            <table class="specs-table">
+              <thead>
+                <tr>
+                  <th>Variant</th>
+                  <th>Precision</th>
+                  <th>Size</th>
+                  <th>Latency</th>
+                  <th>Accuracy</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="active-model-row">
+                  <td><strong>Edge AI AeroVibe INT8</strong></td>
+                  <td>INT8 Quant</td>
+                  <td>4.2 MB</td>
+                  <td>11.4 ms</td>
+                  <td>99.4%</td>
+                  <td class="status-healthy">ACTIVE</td>
+                </tr>
+                <tr>
+                  <td>Edge AI AeroVibe FP32</td>
+                  <td>Float32</td>
+                  <td>16.8 MB</td>
+                  <td>48.2 ms</td>
+                  <td>99.6%</td>
+                  <td class="status-warning">SLOW</td>
+                </tr>
+                <tr>
+                  <td>MobileNetV2</td>
+                  <td>INT8 Quant</td>
+                  <td>32.1 MB</td>
+                  <td>124.5 ms</td>
+                  <td>99.7%</td>
+                  <td class="status-critical">FAIL</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <ul class="tiny-details-list model-info-margin">
+              <li>
+                <strong>Precision Rating:</strong>
+                <span class="status-healthy">99.8% Precision</span>
+              </li>
+              <li>
+                <strong>Recall (Sensitivity):</strong>
+                <span class="status-healthy">99.4% Recall</span>
+              </li>
+              <li>
+                <strong>F1 Score Rating:</strong>
+                <span class="status-healthy">99.6% F1-Score</span>
+              </li>
+              <li>
+                <strong>MAC Operations:</strong>
+                <span>12.4 Million Operations</span>
+              </li>
+              <li>
+                <strong>Active Co-Processor:</strong>
+                <span>ARM Cortex-A72 Flight Core</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- TRAINING DATASETS REPOSITORY -->
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>🎙️ ACOUSTIC & VIBRATION TRAINING DATASETS REPOSITORY</h3>
+          </div>
+          <div class="card-body dataset-repo-body">
+            <p class="cnn-visual-intro" style="margin-bottom:15px;">Aerospace-grade neural networks require training on diverse turbine, bearing, and motor vibration profiles. Explore the benchmark datasets pre-loaded and integrated into the AeroVibe model:</p>
+            
+            <div class="dataset-cards-container">
+              
+              <div class="dataset-item-card">
+                <div class="dataset-meta">
+                  <span class="dataset-tag tag-nasa">NASA AMES</span>
+                  <h4>C-MAPSS Turbofan Simulator</h4>
+                </div>
+                <p class="dataset-desc">Simulates commercial turbofan degradation runs under 6 distinct flight regimes, logging 21 sensors (EGT, pressure ratios, bleed flow, shaft speeds).</p>
+                <div class="dataset-stats">
+                  <span><strong>Modality:</strong> Thermodynamic telemetry</span>
+                  <span><strong>Training Status:</strong> Pre-trained Base Model</span>
+                </div>
+                <button class="dataset-action-btn" data-engine="CFM56" data-dataset="C-MAPSS">LOAD CFM56 WEIGHTS</button>
+              </div>
+
+              <div class="dataset-item-card">
+                <div class="dataset-meta">
+                  <span class="dataset-tag tag-cwru">CWRU</span>
+                  <h4>Bearing Defect Dataset</h4>
+                </div>
+                <p class="dataset-desc">Benchmark dataset for rotary motor bearing defects. High-speed accelerometers (up to 48kHz) map localized inner/outer race micro-crack frequencies.</p>
+                <div class="dataset-stats">
+                  <span><strong>Modality:</strong> Accelerometer Vibrations</span>
+                  <span><strong>Training Status:</strong> Fine-tuned Target Calibration</span>
+                </div>
+                <button class="dataset-action-btn" data-engine="GE90" data-dataset="CWRU Bearing">LOAD GE90 WEIGHTS</button>
+              </div>
+
+              <div class="dataset-item-card">
+                <div class="dataset-meta">
+                  <span class="dataset-tag tag-mimii">MIMII SOUNDS</span>
+                  <h4>Acoustic Machine Dataset</h4>
+                </div>
+                <p class="dataset-desc">Real-world acoustic signatures for pumps, valves, and fans. Microphones record ambient sound waves, isolating background hums from material failures.</p>
+                <div class="dataset-stats">
+                  <span><strong>Modality:</strong> Microphones / Sound Pressure</span>
+                  <span><strong>Training Status:</strong> Noise-Filter Calibrated</span>
+                </div>
+                <button class="dataset-action-btn" data-engine="Trent 900" data-dataset="MIMII Acoustic">LOAD TRENT WEIGHTS</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 7: OPERATIONS GUIDE (Manual & Gemini API Integration Chatbot) -->
+    <section id="page-guide" class="page-view">
+      <div class="guide-layout">
+        <!-- Step-by-Step Guide -->
+        <div class="glass-card guide-text-card">
+          <div class="card-header">
+            <h3>EDGE AI AEROVIBE OPERATIONS MANUAL</h3>
+          </div>
+          <div class="card-body manual-content">
+            <!-- GEMINI API CONFIGURATION BOX -->
+            <div class="gemini-api-config-box">
+              <h5>🔌 Real-time Google Gemini AI Integration</h5>
+              <p>Provide a Google Gemini API key to activate the live AI assistant. Without a key, the system uses the air-gapped pre-coded specialist response framework.</p>
+              <div class="api-key-input-row">
+                <input type="password" id="gemini-api-key-input" placeholder="Paste Gemini API Key here...">
+                <button id="btn-save-api-key">CONNECT AI</button>
+              </div>
+              <div class="api-key-status" id="api-key-status-label">Offline Mock Model Active</div>
+            </div>
+
+            <!-- GOOGLE CLOUD STORAGE & FIREBASE ARCHITECTURE PANEL -->
+            <div class="gcp-integration-box">
+              <h5>🛠️ Google Cloud Platform & Firebase Architectures</h5>
+              <div class="gcp-grid">
+                <div class="gcp-item">
+                  <span class="gcp-lbl">Firebase Authentication</span>
+                  <strong class="gcp-val text-green">CAPT. S. VAISHNAV // AIR INDIA FLIGHT OPS ADMIN</strong>
+                </div>
+                <div class="gcp-item">
+                  <span class="gcp-lbl">GCS Bucket Upload Link</span>
+                  <strong class="gcp-val text-cyan">gs://airindia-aerovibe-blackbox/</strong>
+                </div>
+                <div class="gcp-item span-two-col">
+                  <span class="gcp-lbl">Firestore Live Sync Collections (Write Log)</span>
+                  <div class="firestore-log-console" id="firestore-live-log">
+                    [FIRESTORE] db.collection('simulation_logs').doc('AIRINDIA_AI101').set({ active: true })
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="manual-section">
+              <h4>1. Overview of the Closed-Loop System</h4>
+              <p>Edge AI AeroVibe is designed to monitor turbine blade stress signals and initiate automatic mechanical isolation within milliseconds of structural crack detection. This local containment process functions autonomously with tri-layer safety filters (Filter A: Sensor Fusion, Filter B: Temporal Voting, Filter C: Human Veto) to prevent false-alarm shutdowns during commercial flight operations.</p>
+            </div>
+
+            <div class="manual-section">
+              <h4>2. Steps to Run the Flight Deck Test</h4>
+              <ol class="manual-steps">
+                <li>
+                  <strong>Verify Normal Operation:</strong> Navigate to the <strong>Flight Deck</strong> page. The casing sensor graph (oscilloscope) shows a low-amplitude blue sinusoidal rotation wave, and the waterfall spectrogram displays low-frequency harmonics. The CNN status is green and reads <code>HEALTHY (99.8%)</code>.
+                </li>
+                <li>
+                  <strong>Flip Switch Cover:</strong> Click the dark red button labeled <strong>GUARD CLOSED</strong>. It rotates up in 3D space, changing to <strong>GUARD Flipped</strong>, and unlocks the inject options.
+                </li>
+                <li>
+                  <strong>Inject Severe Strike:</strong> Click the glowing red <strong>INJECT SEVERE STRIKE</strong> button.
+                  <ul>
+                    <li>A warning banner flashes: <code>AUTOMATED ISOLATION IN 3.00s</code>.</li>
+                    <li>The <strong>[VETO AUTOMATED SHUTDOWN]</strong> button arms. You have 3 seconds to click it to cancel the safety trip.</li>
+                    <li>If the timer reaches 0, the engine shuts down in 17.2ms. The Fuel Solenoid locks to SHUT, Variable Guide Vanes swivels to stall pitch, and the emergency alert overlay displays.</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Inject Soft Impact:</strong> Click the glowing orange <strong>INJECT SOFT IMPACT</strong> button.
+                  <ul>
+                    <li>The engine remains active but registers a warning. RUL drops to 35 minutes and Wear index increases to 42%.</li>
+                    <li>A dotted orange <strong>Alternative Diversion Route</strong> displays on the world map routing the plane to Mumbai (BOM) Hub.</li>
+                    <li>A 30-to-45-Minute Precautionary Alert warning banner displays.</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Reset Loop:</strong> Click the <strong>RESET SAFETY LOOP</strong> button to re-arm.
+                </li>
+              </ol>
+            </div>
+
+            <div class="manual-section">
+              <h4>3. FADEC Co-Processor & Avionics Bus Integration</h4>
+              <p>Edge AI AeroVibe integrates directly as an Electronic Engine Control (EEC) card within the FADEC housing. Critical shutoffs (solenoids and vanes) use hardwired analog relays to execute in under 2ms, bypassing software stacks. Status reporting is packed into ARINC 429 digital words (e.g. Label 340 for Safety State, Label 345 for Wear) and transmitted to the flight deck display systems over standard AFDX networks. This isolates the local 17.2ms emergency safety loop from the cockpit display sync lag (3.14s).</p>
+            </div>
+
+            <div class="manual-section">
+              <h4>4. Acoustic Casing Calibration Diagnostics</h4>
+              <p>Different turbofan models (e.g., GEnx vs. CFM LEAP) present different background resonance and vibration baselines. Upon deployment, technicians execute the <code>calibration</code> command to run ground sweep tests, normalizing baseline background noise and uploading target frequency masks. Piezoelectric acoustic sensors capture high-frequency elastic stress waves ($20\text{ kHz}$ to $100\text{ kHz}$) caused by micro-fractures, filtering out low-frequency blade rotation hum.</p>
+            </div>
+
+            <div class="manual-section warning-box">
+              <h5>⚠️ Critical Operational Safety Note</h5>
+              <p>Once a blade crack is identified and confirmed by the tri-layer filter system, fuel supply is isolated immediately to prevent combustion forces from driving a shedding blade through the engine casing. Veto manual override is bypassed if Filter A and Filter B detect extreme mechanical failure bounds.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chatbot Companion -->
+        <div class="panel glass-card chatbot-panel">
+          <div class="panel-header">
+            <div class="bot-info">
+              <span class="pulse-dot blue"></span>
+              <h2>COCKPIT FLIGHT SAFETY ASSISTANT</h2>
+            </div>
+            <span class="bot-badge" id="bot-model-badge">SECURE OFFLINE AI</span>
+          </div>
+          <div class="panel-body chat-body">
+            <div class="chatbot-container full-height">
+              <div class="chatbot-messages" id="chat-messages">
+                <div class="chat-message bot">
+                  <div class="message-content">
+                    Welcome back, Captain. I am the Edge AI AeroVibe Flight Safety Assistant, operating completely locally in this air-gapped environment. 
+                    <br><br>
+                    I can explain how the engine's casing stress waves are processed via our TinyML pipeline, or clarify details about our sub-22ms closed-loop valve mitigation. How can I assist you today?
+                  </div>
+                </div>
+              </div>
+              <div class="chatbot-input-line">
+                <input type="text" id="chat-input-field" placeholder="Ask about sensors, TinyML, latency, or actuation..." autocomplete="off">
+                <button id="chat-send-btn">SEND</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 8: COMMAND SHELL (Dedicated Console Terminal with History & AutoComplete) -->
+    <section id="page-shell" class="page-view">
+      <div class="shell-layout">
+        <!-- Interactive Terminal -->
+        <div class="panel glass-card shell-panel">
+          <div class="panel-header">
+            <span class="panel-icon">💻</span>
+            <h2>AVIONICS SYSTEM SHELL</h2>
+          </div>
+          <div class="panel-body terminal-body">
+            <div class="cli-container full-height">
+              <div class="cli-header">
+                <span>aerovibe-shell@airgapped:~#</span>
+                <span class="blink-fast" id="shell-status">ONLINE</span>
+              </div>
+              <div class="cli-output" id="terminal-output">
+                <div>AeroVibe AI Avionics Command Console.</div>
+                <div>Type 'help' to list available system commands. Autocomplete with [Tab]. Cycle history with [↑/↓].</div>
+                <div class="terminal-line"><span class="prompt">$</span> <span class="typed">system-check --full</span></div>
+                <div>[ OK ] ESP32 DSP Node (UART Connection Solid)</div>
+                <div>[ OK ] Pi4 TinyML Engine Core (TFLite Runtime Active)</div>
+                <div>[ OK ] Closed-Loop Solenoid & Servo Relays Armed</div>
+              </div>
+              <div class="cli-input-line">
+                <span class="prompt">$</span>
+                <input type="text" id="terminal-input-field" placeholder="Type command... Press Tab for autocomplete" autocomplete="off">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Command Helper Sidecard -->
+        <div class="glass-card side-helper-card">
+          <div class="card-header">
+            <h3>COMMAND ASSISTANCE</h3>
+          </div>
+          <div class="card-body">
+            <p class="helper-intro">Type commands directly or click shortcuts to execute immediately. Autocomplete is active in the command input field.</p>
+            <div class="quick-commands-grid">
+              <button class="cmd-shortcut-btn" data-cmd="help">help</button>
+              <button class="cmd-shortcut-btn" data-cmd="status">status</button>
+              <button class="cmd-shortcut-btn" data-cmd="diagnostics">diagnostics</button>
+              <button class="cmd-shortcut-btn" data-cmd="sensor status">sensor status</button>
+              <button class="cmd-shortcut-btn" data-cmd="cnn">cnn</button>
+              <button class="cmd-shortcut-btn" data-cmd="temperature">temperature</button>
+              <button class="cmd-shortcut-btn" data-cmd="rpm">rpm</button>
+              <button class="cmd-shortcut-btn" data-cmd="latency">latency</button>
+              <button class="cmd-shortcut-btn" data-cmd="logs">logs</button>
+              <button class="cmd-shortcut-btn" data-cmd="export">export</button>
+              <button class="cmd-shortcut-btn" data-cmd="restart">restart</button>
+              <button class="cmd-shortcut-btn" data-cmd="clear">clear</button>
+            </div>
+            <div class="helper-info-box">
+              <h5>Terminal Auto-Complete Keys</h5>
+              <p>Type the starting characters of a command (e.g. <code>dia</code>) and press <strong>Tab</strong> to autocomplete to <code>diagnostics</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW PAGE 9: ABOUT -->
+    <section id="page-about" class="page-view">
+      <div class="hero-text-panel">
+        <div class="hero-tag">EDGE AI AEROVIBE // ABOUT</div>
+        <h2>Commercial Propulsion AI Edge Systems Framework</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="glass-card info-card span-two-col">
+          <div class="card-header">
+            <h3>PROJECT OVERVIEW</h3>
+          </div>
+          <div class="card-body">
+            <p class="mission-paragraph">
+              Edge AI AeroVibe is a commercial flight safety framework designed to prevent turbofan mechanical containment breaches in civilian aircraft. By capturing casing acoustic stress waves at high sampling rates and processing them locally via a quantized CNN co-processor, the system demonstrates that safety logic can execute in under 18 milliseconds—offering a highly resilient, offline failsafe option for Air India's domestic Airbus A320neo and international Boeing 787-8 Dreamliner fleets operating under trans-oceanic ETOPS rules.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <div class="card-header">
+            <h3>SYSTEM METRICS</h3>
+          </div>
+          <div class="card-body">
+            <ul class="tiny-details-list">
+              <li><strong>Author:</strong> <span>Capt. S. Vaishnav</span></li>
+              <li><strong>Version:</strong> <span>ENG-TWIN v2.2</span></li>
+              <li><strong>Safety Standard:</strong> <span>Avionics Level A</span></li>
+              <li><strong>Quantization:</strong> <span>INT8 (8-Bit Fixed Point)</span></li>
+              <li><strong>Actuation Target:</strong> <span>Sub-22ms Boundaries</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- NEW PAGE 10: SETTINGS -->
+  <section id="page-settings" class="page-view">
+    <div class="hero-text-panel">
+      <div class="hero-tag">EDGE AI AEROVIBE // DIAGNOSTIC SETTINGS</div>
+      <h2>System Calibration & Configuration Controls</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="glass-card info-card span-two-col">
+        <div class="card-header">
+          <h3>AVIONICS CALIBRATION</h3>
+        </div>
+        <div class="card-body">
+          <p class="mission-paragraph">
+            Adjust edge telemetry sensitivities, change the active neural networks co-processor parameters, or test manual GPIO relay triggers.
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-card info-card">
+        <div class="card-header">
+          <h3>DIAGNOSTIC STATUS</h3>
+        </div>
+        <div class="card-body">
+          <ul class="tiny-details-list">
+            <li><strong>Model Version:</strong> <span>INT8 v2.2.1</span></li>
+            <li><strong>ADC Clock Speed:</strong> <span>80 MHz</span></li>
+            <li><strong>DMA Buffer:</strong> <span>512 Bytes</span></li>
+            <li><strong>Quantization Scale:</strong> <span>0.0039</span></li>
+            <li><strong>Zero Point Shift:</strong> <span>-128</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Futuristic Glassmorphism Drawer Menu -->
+  <div class="nav-drawer-overlay" id="nav-drawer">
+    <div class="nav-drawer-content">
+      <div class="drawer-header">
+        <h3>SYSTEM COMMAND</h3>
+        <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Close Menu">✕</button>
+      </div>
+      
+      <ul class="drawer-links">
+        <li><button class="drawer-link active" data-page="page-portal">🏠 Home</button></li>
+        <li><button class="drawer-link" data-page="page-mission">🎯 Mission</button></li>
+        <li><button class="drawer-link" data-page="page-vision">🚀 Vision</button></li>
+        <li><button class="drawer-link" data-page="page-architecture">🏗 System Architecture</button></li>
+        <li><button class="drawer-link" data-page="page-flightdeck">✈ Flight Deck</button></li>
+        <li><button class="drawer-link" data-page="page-tinyml">🧠 TinyML AI</button></li>
+        <li><button class="drawer-link" data-page="page-guide">📖 Operations Guide</button></li>
+        <li><button class="drawer-link" data-page="page-shell">💻 Command Shell</button></li>
+        <li><button class="drawer-link" data-page="page-about">👥 About</button></li>
+        <li><button class="drawer-link" data-page="page-settings">⚙ Settings</button></li>
+      </ul>
+
+      <!-- Settings and Diagnostics Widgets at the bottom of the drawer -->
+      <div class="drawer-footer">
+        <div class="drawer-system-status">
+          <h5>SYSTEM CONTEXT</h5>
+          <div class="drawer-badge-row">
+            <span class="voice-badge active" id="drawer-voice-status">VOICE: ON</span>
+            <span class="net-badge warning" id="drawer-net-status">SAT SYNC</span>
+          </div>
+          <button class="btn-demo-action" id="drawer-btn-demo" style="width:100%; margin-top:10px;">▶ RUN AUTOMATED DEMO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
